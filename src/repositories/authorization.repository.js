@@ -7,3 +7,7 @@ export function insertNewUser (name, email, password, foto) {
 export function searchEmail(email) {
     return db.query(`SELECT * FROM users WHERE email=$1`, [email])
 }
+
+export function insertNewSession(idUser, token) {
+    return db.query(`INSERT INTO login ("idUser", token) VALUES ($1, $2)`, [idUser, token])
+}

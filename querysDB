@@ -6,3 +6,11 @@ CREATE TABLE users (
 	foto TEXT NOT NULL);
 
 SELECT * FROM users;
+
+CREATE TABLE login (
+	id SERIAL PRIMARY KEY,
+	"idUser" INTEGER NOT NULL,
+	token TEXT NOT NULL
+);
+
+SELECT * FROM login;
