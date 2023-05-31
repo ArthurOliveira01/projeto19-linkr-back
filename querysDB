@@ -14,3 +14,13 @@ CREATE TABLE login (
 );
 
 SELECT * FROM login;
+
+CREATE TABLE posts ( 
+	id SERIAL PRIMARY KEY,
+	"idUser" INTEGER NOT NULL,
+	link TEXT NOT NULL,
+	"description" TEXT,
+	createdAt TIMESTAMP NOT NULL 
+);
+
+SELECT * FROM posts
