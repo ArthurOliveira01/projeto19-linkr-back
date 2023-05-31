@@ -56,7 +56,7 @@ export async function getUsers(req,res){
 
     try {
         const query = await db.query(`
-        SELECT * FROM users WHERE name=$1
+        SELECT * FROM users WHERE name LIKE '$1%'
         `, [search]);
         //incompleto
     } catch (error) {
