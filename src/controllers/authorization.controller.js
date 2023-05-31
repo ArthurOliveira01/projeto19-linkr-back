@@ -26,3 +26,40 @@ export async function signin(req, res) {
         console.log(err)
     }
 }
+
+export async function getUserbyId(req,res){
+    const {id} = req.params;
+    //authorization
+
+    try {
+
+        const query = await db.query(
+            `SELECT * FROM users WHERE id=$1`
+        ,[id]);
+        if(query.rows.length === 0){
+            return res.sendStatus(400);
+            //400
+        }
+        return res.send(query.rows[0])
+        
+    } catch (error) {
+        return res.sendStatus(500);
+        //500
+    }
+   
+
+}
+
+export async function getUsers(req,res){
+
+    const {search} = req.body;
+
+    try {
+        const query = await db.query(`
+        SELECT * FROM users WHERE name=$1
+        `, [search]);
+        //incompleto
+    } catch (error) {
+        
+    }
+}
