@@ -14,3 +14,37 @@ CREATE TABLE login (
 );
 
 SELECT * FROM login;
+
+CREATE TABLE posts (
+	id SERIAL PRIMARY KEY,
+	"idUser" INTEGER NOT NULL,
+	link TEXT NOT NULL,
+	description TEXT NOT NULL,
+	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+SELECT * FROM posts;
+
+INSERT INTO posts ("idUser", link, description) VALUES (1, 'https://developer.mozilla.org/pt-BR/docs/Web/JavaScript', 'Javascript'),
+(1, 'https://react.dev', 'ReactJs #react'), 
+(1, 'https://reactnative.dev', 'ReactNative #reactnative'), 
+(1, 'https://vuejs.org', 'VueJs #vue'), 
+(1, 'https://nodejs.org/en', 'NodeJs #nodejs'), 
+(1, 'https://angularjs.org', 'AngularJs #angularjs'); 
+
+CREATE TABLE hashtags (
+	id SERIAL PRIMARY KEY,
+	"idPost" INTEGER NOT NULL,
+	hashtag TEXT NOT NULL
+);
+
+SELECT * FROM hashtags;
+
+INSERT INTO hashtags ("idPost", hashtag) VALUES (1, 'dev'), 
+(2, 'javascript'),
+(3, 'reactnative'),
+(4, 'vue'),
+(5, 'backend'),
+(6, 'framework');
+
+SELECT COUNT(hashtag), hashtag FROM hashtags GROUP BY hashtag ORDER BY count DESC;
