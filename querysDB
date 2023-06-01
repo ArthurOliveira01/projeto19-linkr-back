@@ -15,6 +15,7 @@ CREATE TABLE login (
 
 SELECT * FROM login;
 
+<<<<<<< HEAD
 CREATE TABLE posts (
 	id SERIAL PRIMARY KEY,
 	"idUser" INTEGER NOT NULL,
@@ -48,3 +49,14 @@ INSERT INTO hashtags ("idPost", hashtag) VALUES (1, 'dev'),
 (6, 'framework');
 
 SELECT COUNT(hashtag), hashtag FROM hashtags GROUP BY hashtag ORDER BY count DESC;
+=======
+CREATE TABLE posts ( 
+	id SERIAL PRIMARY KEY,
+	"idUser" INTEGER NOT NULL,
+	link TEXT NOT NULL,
+	"description" TEXT,
+	createdAt TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+SELECT * FROM posts
+>>>>>>> ddc73da1647aeddb45bf5f4f21e90ff5af094f78
