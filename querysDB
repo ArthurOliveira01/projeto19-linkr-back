@@ -20,7 +20,7 @@ CREATE TABLE posts (
 	"idUser" INTEGER NOT NULL,
 	link TEXT NOT NULL,
 	"description" TEXT,
-	createdAt TIMESTAMP NOT NULL 
+	createdAt TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 SELECT * FROM posts
