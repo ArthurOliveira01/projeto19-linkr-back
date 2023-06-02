@@ -28,8 +28,10 @@ export async function signin(req, res) {
 }
 
 export async function getUserbyId(req,res){
-    const {id} = req.params;
-    //authorization
+    const id = parseInt(req.params.id);
+  
+    if (!id) return res.sendStatus(404);
+    
 
     try {
 
