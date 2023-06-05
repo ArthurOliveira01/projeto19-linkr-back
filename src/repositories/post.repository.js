@@ -19,3 +19,7 @@ export function deletePost(postId){
 export function updatePost(link, description, postId){
     return db.query(`UPDATE posts SET link=$1, description=$2  WHERE id=$3`, [link, description, postId])
 }
+
+export function searchPosts(){
+    return db.query('SELECT * FROM posts ORDER BY createdAt DESC LIMIT 20')
+}

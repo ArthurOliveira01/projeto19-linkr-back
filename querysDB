@@ -24,3 +24,9 @@ CREATE TABLE posts (
 );
 
 SELECT * FROM posts
+
+CREATE TABLE likes (
+	id SERIAL PRIMARY KEY,
+	"idPost" INTEGER NOT NULL,
+	"idUser" INTEGER NOT NULL
+)

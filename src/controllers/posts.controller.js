@@ -1,4 +1,4 @@
-import { insertPost, searchSession, searchPost, deletePost, updatePost } from "../repositories/post.repository.js";
+import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts } from "../repositories/post.repository.js";
 
 
 export async function postContent(req, res){
@@ -59,6 +59,15 @@ export async function updateContent(req, res){
         }
         updatePost(link, description, postId);
         return res.sendStatus(200);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+export async function getPosts(req, res){
+    try {
+        const posts = await searchPosts();
+        return res.status(200).send(posts.rows);
     } catch (error) {
         return res.status(500).send(error.message);
     }

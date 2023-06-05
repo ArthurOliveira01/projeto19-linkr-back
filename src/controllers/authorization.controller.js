@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt"
-import { insertNewSession, insertNewUser } from "../repositories/authorization.repository.js"
+import { insertNewSession, insertNewUser, searchUser } from "../repositories/authorization.repository.js"
 import {v4 as uuid} from "uuid"
+import { searchSession } from "../repositories/post.repository.js"
 
 export async function signup(req, res) {
     const {name, email, password, foto} = res.locals
@@ -63,5 +64,27 @@ export async function getUsers(req,res){
         //incompleto
     } catch (error) {
         
+    }
+}
+
+export async function sendInfo(req, res) {
+    const {authorization} = req.headers;
+    const token = authorization?.replace("Bearer ", "");
+    console.log(token);
+    try {
+        const userFind = await searchSession(token);
+        const userId = userFind.rows[0].idUser;
+        const userInfo = await searchUser(userId);
+        const object = {
+            id: userInfo.rows[0].id,
+            name: userInfo.rows[0].name,
+            email: userInfo.rows[0].email,
+            foto: userInfo.rows[0].foto
+        }
+        console.log(object);
+        return res.status(200).send(object);
+    } catch (err) {
+        console.log(err.message);
+        return res.status(500).send(err.message);
     }
 }

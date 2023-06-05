@@ -11,3 +11,7 @@ export function searchEmail(email) {
 export function insertNewSession(idUser, token) {
     return db.query(`INSERT INTO login ("idUser", token) VALUES ($1, $2)`, [idUser, token])
 }
+
+export function searchUser(idUser){
+    return db.query(`SELECT * FROM users WHERE id=$1`, [idUser]);
+}
