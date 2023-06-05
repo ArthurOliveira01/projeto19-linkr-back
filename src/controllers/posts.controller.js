@@ -1,4 +1,5 @@
 import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts } from "../repositories/post.repository.js";
+import { searchUser } from "../repositories/authorization.repository.js";
 
 
 export async function postContent(req, res){
@@ -67,8 +68,31 @@ export async function updateContent(req, res){
 export async function getPosts(req, res){
     try {
         const posts = await searchPosts();
-        return res.status(200).send(posts.rows);
+        const info = posts.rows;
+        let final = [];
+        for(let i = 0; i < info.length; i++){
+            console.log('1');
+            const user = await searchUser(info[i].idUser);
+            console.log('2');
+            console.log(user.rows);
+            const userinfo = user.rows[0];
+            console.log('3');
+            const aux = {
+                id: info[i].id,
+                idUser: info[i].idUser,
+                link: info[i].link,
+                description: info[i].description,
+                createdAt: info[i].createdAt,
+                username: userinfo.name,
+                foto: userinfo.foto,
+            }
+            console.log('4');
+            final.push(aux);       
+            console.log('5'); 
+        }
+        return res.status(200).send(final);
     } catch (error) {
+        console.log(error.message);
         return res.status(500).send(error.message);
     }
 }
