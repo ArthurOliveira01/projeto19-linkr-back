@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt"
 import { insertNewSession, insertNewUser } from "../repositories/authorization.repository.js"
 import {v4 as uuid} from "uuid"
+import { db } from "../database/databaseconnectio.js"
 
 export async function signup(req, res) {
     const {name, email, password, foto} = res.locals
@@ -56,12 +57,16 @@ export async function getUsers(req,res){
 
     const {search} = req.body;
 
+    if(!search){
+        return res.sendStatus(404);
+    }
+
     try {
         const query = await db.query(`
-        SELECT * FROM users WHERE name LIKE '$1%'
+        SELECT * FROM users WHERE name LIKE $1
         `, [search]);
-        //incompleto
+        return res.send(query.rows)
     } catch (error) {
-        
+        return res.sendStatus(500);
     }
 }
