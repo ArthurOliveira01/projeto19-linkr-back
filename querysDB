@@ -30,3 +30,5 @@ CREATE TABLE likes (
 	"idPost" INTEGER NOT NULL,
 	"idUser" INTEGER NOT NULL
 )
+
+SELECT * FROM likes
