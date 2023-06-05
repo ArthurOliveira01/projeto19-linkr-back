@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
-import { insertNewSession, insertNewUser, searchUser } from "../repositories/authorization.repository.js"
+import { insertNewSession, insertNewUser } from "../repositories/authorization.repository.js"
 import {v4 as uuid} from "uuid"
-import { searchSession } from "../repositories/post.repository.js"
+import { db } from "../database/databaseconnectio.js"
 
 export async function signup(req, res) {
     const {name, email, password, foto} = res.locals
@@ -43,7 +43,15 @@ export async function getUserbyId(req,res){
             return res.sendStatus(400);
             //400
         }
-        return res.send(query.rows[0])
+        const query2 = await db.query(`
+          SELECT * FROM posts WHERE "idUser"=$1
+         `,[id]);
+        const obj={
+            name: query.rows[0].name,
+            foto: query.rows[0].foto,
+            posts:query2.rows
+        }
+        return res.send(obj)
         
     } catch (error) {
         return res.sendStatus(500);
@@ -55,15 +63,20 @@ export async function getUserbyId(req,res){
 
 export async function getUsers(req,res){
 
-    const {search} = req.body;
+    const {search} = req.headers;
+    
+
+    if(!search){
+        return res.sendStatus(404);
+    }
 
     try {
         const query = await db.query(`
-        SELECT * FROM users WHERE name LIKE '$1%'
+        SELECT * FROM users WHERE name LIKE $1
         `, [search]);
-        //incompleto
+        return res.send(query.rows.slice(0,4))
     } catch (error) {
-        
+        return res.sendStatus(500);
     }
 }
 
