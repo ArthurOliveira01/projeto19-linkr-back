@@ -22,12 +22,14 @@ export async function postContent(req, res){
 export async function deleteContent(req, res){
     const authorization = req.headers.authorization;
     const token = authorization.replace("Bearer ", "");
-    const { postId } = req.body;
+    const { postId } = req.params;
 
     try {
         const session = await searchSession(token);
         const userId = session.rows[0].idUser;
+        console.log(postId);
         const post = await searchPost(postId);
+        console.log(post.rows);
         if(!post.rows[0]){
             return res.sendStatus(404);
         };

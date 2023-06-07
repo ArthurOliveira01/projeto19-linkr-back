@@ -6,7 +6,7 @@ import { postsSchema } from "../schemas/posts.schema.js";
 const postsRouter = Router();
 
 postsRouter.post("/content", validateSession, validateContent(postsSchema), postContent);
-postsRouter.delete("/content", validateSession, deleteContent);
+postsRouter.delete("/content/:postId", validateSession, deleteContent);
 postsRouter.put("/content", validateSession, validateUpdate(postsSchema), updateContent);
 postsRouter.get("/content", getPosts)
 
