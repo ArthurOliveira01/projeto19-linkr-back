@@ -67,13 +67,11 @@ export async function getUsers(req,res){
     const {search} = req.headers;
     
 
-    if(!search){
-        return res.sendStatus(404);
-    }
+    
 
     try {
         const query = await db.query(`
-        SELECT * FROM users WHERE name LIKE $1
+        SELECT * FROM users WHERE name LIKE '%' || $1 || '%'
         `, [search]);
         return res.send(query.rows.slice(0,4))
     } catch (error) {
