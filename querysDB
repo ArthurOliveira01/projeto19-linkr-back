@@ -41,3 +41,9 @@ CREATE TABLE "comments" (
 )
 
 SELECT * FROM "comments"
+
+CREATE TABLE follows (
+	id SERIAL PRIMARY KEY,
+	"idUser" INTEGER NOT NULL,
+	"followsId" INTEGER NOT NULL
+)

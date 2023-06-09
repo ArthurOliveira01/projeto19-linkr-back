@@ -1,4 +1,4 @@
-import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts, likePostDB, dislikePost, searchLikes, searchUserLike, getComments, postComments } from "../repositories/post.repository.js";
+import { insertPost, getPostsByFollowing, searchSession, searchPost, deletePost, updatePost, searchPosts, likePostDB, dislikePost, searchLikes, searchUserLike, getComments, postComments, getFollowing } from "../repositories/post.repository.js";
 import { searchUser } from "../repositories/authorization.repository.js";
 import urlMetadata from "url-metadata";
 
@@ -82,8 +82,15 @@ export async function getPosts(req, res){
     try {
         const session = await searchSession(token);
         const idUser = session.rows[0].idUser;
-        const posts = await searchPosts();
+        const follows = await getFollowing(idUser);
+        let followsId = [];
+        for(let i = 0; i < follows.rows.length; i++){
+            followsId.push(follows.rows[i].followsId);
+        }
+        console.log(followsId);
+        const posts = await getPostsByFollowing(followsId);
         const info = posts.rows;
+        console.log(info);
         let final = [];
         for(let i = 0; i < info.length; i++){
             const user = await searchUser(info[i].idUser);
@@ -124,6 +131,7 @@ export async function getPosts(req, res){
         }
         return res.status(200).send(final);
     } catch (error) {
+        console.log(error.message);
         return res.status(500).send(error.message);
     }
 }

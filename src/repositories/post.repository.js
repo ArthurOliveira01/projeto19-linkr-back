@@ -47,3 +47,11 @@ export function postComments(idUser, idPost, comment){
 export function getComments(idPost){
     return db.query(`SELECT * FROM "comments" WHERE "idPost"=$1`, [idPost]);
 }
+
+export function getFollowing(idUser){
+    return db.query(`SELECT * FROM follows WHERE "idUser"=$1`, [idUser]);
+}
+
+export function getPostsByFollowing(Ids) {
+    return db.query(`SELECT * FROM posts WHERE "idUser" IN (${Ids.map(id => "'" + id + "'").join(",")})`);
+  }
