@@ -1,6 +1,9 @@
 import { insertPost, getPostsByFollowing, searchSession, searchPost, deletePost, updatePost, searchPosts, likePostDB, dislikePost, searchLikes, searchUserLike, getComments, postComments, getFollowing } from "../repositories/post.repository.js";
 import { searchUser } from "../repositories/authorization.repository.js";
+import fetch from "node-fetch";
 import urlMetadata from "url-metadata";
+
+urlMetadata.setFetchOptions({fetch});
 
 
 export async function postContent(req, res){
