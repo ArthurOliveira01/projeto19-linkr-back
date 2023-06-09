@@ -25,6 +25,7 @@ export async function postContent(req, res){
             return res.sendStatus(200);
         }
     } catch (error) {
+        console.log(error.message);
         return res.status(500).send(error.message);
     }
 }
