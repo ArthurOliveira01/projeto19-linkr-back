@@ -1,19 +1,29 @@
 import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts } from "../repositories/post.repository.js";
 import { searchUser } from "../repositories/authorization.repository.js";
+import urlMetadata from "url-metadata";
 
 
 export async function postContent(req, res){
     const authorization = req.headers.authorization;
     const token = authorization.replace("Bearer ", "");
     const { link, description } = res.locals;
+    let able = true;
     
     try {
         const session = await searchSession(token);
         const userId = session.rows[0].idUser;
         const currentTimestamp = Date.now();
         const postgresTimestamp = new Date(currentTimestamp).toISOString();
-        await insertPost(userId, link, description, postgresTimestamp);
-        return res.sendStatus(200);
+        await urlMetadata(link)
+        .then((metadata) => {
+        }, (err) =>{
+            able = false
+            return res.status(422).send('Link inválido para os metadados');
+        })  
+        if(able){
+            await insertPost(userId, link, description, postgresTimestamp);
+            return res.sendStatus(200);
+        }
     } catch (error) {
         return res.status(500).send(error.message);
     }
@@ -27,9 +37,7 @@ export async function deleteContent(req, res){
     try {
         const session = await searchSession(token);
         const userId = session.rows[0].idUser;
-        console.log(postId);
         const post = await searchPost(postId);
-        console.log(post.rows);
         if(!post.rows[0]){
             return res.sendStatus(404);
         };
@@ -75,6 +83,16 @@ export async function getPosts(req, res){
         for(let i = 0; i < info.length; i++){
             const user = await searchUser(info[i].idUser);
             const userinfo = user.rows[0];
+            let meta;
+            await urlMetadata(info[i].link)
+            .then((metadata) => {
+                console.log(metadata);
+                meta = metadata;
+                console.log(meta)
+            }, (err) =>{
+                console.log(err.message);
+                console.log(err);
+            })  
             const aux = {
                 id: info[i].id,
                 idUser: info[i].idUser,
@@ -83,11 +101,16 @@ export async function getPosts(req, res){
                 createdAt: info[i].createdAt,
                 username: userinfo.name,
                 foto: userinfo.foto,
+                metaTitle: meta.title,
+                metaDescription: meta.description,
+                metaImg: meta.image
             }
-            final.push(aux);       
+            final.push(aux);
+            console.log(final);
         }
         return res.status(200).send(final);
     } catch (error) {
+        console.log(error.message);
         return res.status(500).send(error.message);
     }
 }

@@ -82,7 +82,6 @@ export async function getUsers(req,res){
 export async function sendInfo(req, res) {
     const {authorization} = req.headers;
     const token = authorization?.replace("Bearer ", "");
-    console.log(token);
     try {
         const userFind = await searchSession(token);
         const userId = userFind.rows[0].idUser;
@@ -93,10 +92,8 @@ export async function sendInfo(req, res) {
             email: userInfo.rows[0].email,
             foto: userInfo.rows[0].foto
         }
-        console.log(object);
         return res.status(200).send(object);
     } catch (err) {
-        console.log(err.message);
         return res.status(500).send(err.message);
     }
 }
