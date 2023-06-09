@@ -48,3 +48,18 @@ export function validateUpdate(schema){
         next();
     }
 }
+
+export function validateComment(schema){
+    return (req, res, next) => {
+        const {idPost, comment} = req.body;
+
+        res.locals.idPost = idPost;
+        res.locals.comment = comment;
+
+        const validation = schema.validate(req.body);
+        if(validation.error) {
+            return res.status(422).send(validation.error.message);
+        }
+        next();
+    }
+}

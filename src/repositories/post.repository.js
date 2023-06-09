@@ -39,3 +39,11 @@ export function likePostDB(idUser, idPost){
 export function dislikePost(idUser, idPost){
     return db.query(`DELETE FROM likes WHERE "idPost" =$1 AND "idUser" =$2 `, [idPost, idUser]);
 }
+
+export function postComments(idUser, idPost, comment){
+    return db.query(`INSERT INTO "comments" ("idUser", "idPost", "comment") VALUES ($1, $2, $3)`, [idUser, idPost, comment]);
+}
+
+export function getComments(idPost){
+    return db.query(`SELECT * FROM "comments" WHERE "idPost"=$1`, [idPost]);
+}

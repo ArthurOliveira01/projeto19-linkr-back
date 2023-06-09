@@ -1,4 +1,4 @@
-import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts, likePostDB, dislikePost, searchLikes, searchUserLike } from "../repositories/post.repository.js";
+import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts, likePostDB, dislikePost, searchLikes, searchUserLike, getComments, postComments } from "../repositories/post.repository.js";
 import { searchUser } from "../repositories/authorization.repository.js";
 import urlMetadata from "url-metadata";
 
@@ -149,13 +149,67 @@ export async function unlikePost(req, res){
     try {
         const session = await searchSession(token);
         const idUser = session.rows[0].idUser;
-        console.log(idUser);
-        console.log(idPost);
         await dislikePost(idUser, idPost);
         return res.sendStatus(200);
     } catch (error) {
-        console.log('deu errado')
-        console.log(error.message);
+        return res.status(500).send(error.message);
+    }
+}
+
+export async function postComment(req, res){
+    const authorization = req.headers.authorization;
+    const token = authorization.replace("Bearer ", "");
+    const { idPost, comment } = res.locals;
+
+    try {
+        const session = await searchSession(token);
+        const userId = session.rows[0].idUser;
+        const post = await searchPost(idPost);
+        if(!post.rows[0]){
+            return res.sendStatus(404);
+        };
+        await postComments(userId, idPost, comment);
+        return res.sendStatus(201);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+export async function getComment(req, res){
+    const { idPost } = req.params;
+    const authorization = req.headers.authorization;
+    const token = authorization.replace("Bearer ", "");
+    console.log('teste')
+    try {
+        const session = await searchSession(token);
+        const userId = session.rows[0].idUser;
+        const post = await searchPost(idPost);
+        if(!post.rows[0]){
+            return res.sendStatus(404);
+        };
+        const comments = await getComments(idPost);
+        if(comments.rows.length === 0){
+            return res.status(200).send([{}]);
+        }
+        let final = [];
+        for(let i = 0; i < comments.rows.length; i++){
+            let owner = false;
+            const user = await searchUser(comments.rows[i].idUser);
+            const userinfo = user.rows[0];
+            if(userinfo.id === post.rows[0].idUser){
+                owner = true;
+            }
+            const obj = {
+                username: userinfo.name,
+                userId: userinfo.id,
+                foto: userinfo.foto,
+                comment: comments.rows[i].comment,
+                owner: owner
+            }
+            final.push(obj);
+        }
+        return res.status(200).send(final);
+    } catch (error) {
         return res.status(500).send(error.message);
     }
 }
