@@ -23,3 +23,19 @@ export function updatePost(link, description, postId){
 export function searchPosts(){
     return db.query('SELECT * FROM posts ORDER BY createdAt DESC LIMIT 20')
 }
+
+export function searchLikes(idPost){
+    return db.query(`SELECT * FROM likes WHERE "idPost"=$1`, [idPost]);
+}
+
+export function searchUserLike(idUser, idPost){
+    return db.query(`SELECT * FROM likes WHERE "idUser"=$1 AND "idPost"=$2`, [idUser, idPost]);
+}
+
+export function likePostDB(idUser, idPost){
+    return db.query(`INSERT INTO likes ("idUser", "idPost") VALUES ($1, $2)`, [idUser, idPost]);
+}
+
+export function dislikePost(idUser, idPost){
+    return db.query(`DELETE FROM likes WHERE "idPost" =$1 AND "idUser" =$2 `, [idPost, idUser]);
+}

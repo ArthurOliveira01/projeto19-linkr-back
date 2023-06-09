@@ -1,4 +1,4 @@
-import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts } from "../repositories/post.repository.js";
+import { insertPost, searchSession, searchPost, deletePost, updatePost, searchPosts, likePostDB, dislikePost, searchLikes, searchUserLike } from "../repositories/post.repository.js";
 import { searchUser } from "../repositories/authorization.repository.js";
 import urlMetadata from "url-metadata";
 
@@ -76,7 +76,12 @@ export async function updateContent(req, res){
 }
 
 export async function getPosts(req, res){
+    const authorization = req.headers.authorization;
+    const token = authorization.replace("Bearer ", "");
+
     try {
+        const session = await searchSession(token);
+        const idUser = session.rows[0].idUser;
         const posts = await searchPosts();
         const info = posts.rows;
         let final = [];
@@ -86,13 +91,18 @@ export async function getPosts(req, res){
             let meta;
             await urlMetadata(info[i].link)
             .then((metadata) => {
-                console.log(metadata);
                 meta = metadata;
-                console.log(meta)
             }, (err) =>{
-                console.log(err.message);
-                console.log(err);
-            })  
+            }) 
+            const likes = await searchLikes(info[i].id);
+            const likeCount = likes.rows.length;
+            const done = await searchUserLike(idUser, info[i].id);
+            let liked;
+            if(!done.rows[0]){
+                liked = false;
+            } else {
+                liked = true;
+            }
             const aux = {
                 id: info[i].id,
                 idUser: info[i].idUser,
@@ -101,15 +111,50 @@ export async function getPosts(req, res){
                 createdAt: info[i].createdAt,
                 username: userinfo.name,
                 foto: userinfo.foto,
+                likes: likeCount,
+                liked: liked,
                 metaTitle: meta.title,
                 metaDescription: meta.description,
                 metaImg: meta.image
             }
             final.push(aux);
-            console.log(final);
         }
         return res.status(200).send(final);
     } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+export async function likePost(req, res){
+    const authorization = req.headers.authorization;
+    const token = authorization.replace("Bearer ", "");
+    const { idPost } = req.body;
+
+    try {
+        const session = await searchSession(token);
+        const idUser = session.rows[0].idUser;
+        await likePostDB(idUser, idPost);
+        return res.sendStatus(200);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send(error.message);
+    }
+}
+
+export async function unlikePost(req, res){
+    const authorization = req.headers.authorization;
+    const token = authorization.replace("Bearer ", "");
+    const { idPost } = req.params;
+
+    try {
+        const session = await searchSession(token);
+        const idUser = session.rows[0].idUser;
+        console.log(idUser);
+        console.log(idPost);
+        await dislikePost(idUser, idPost);
+        return res.sendStatus(200);
+    } catch (error) {
+        console.log('deu errado')
         console.log(error.message);
         return res.status(500).send(error.message);
     }
