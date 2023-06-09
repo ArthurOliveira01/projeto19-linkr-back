@@ -87,10 +87,9 @@ export async function getPosts(req, res){
         for(let i = 0; i < follows.rows.length; i++){
             followsId.push(follows.rows[i].followsId);
         }
-        console.log(followsId);
+        followsId.push(idUser);
         const posts = await getPostsByFollowing(followsId);
         const info = posts.rows;
-        console.log(info);
         let final = [];
         for(let i = 0; i < info.length; i++){
             const user = await searchUser(info[i].idUser);
@@ -131,7 +130,6 @@ export async function getPosts(req, res){
         }
         return res.status(200).send(final);
     } catch (error) {
-        console.log(error.message);
         return res.status(500).send(error.message);
     }
 }
@@ -147,7 +145,6 @@ export async function likePost(req, res){
         await likePostDB(idUser, idPost);
         return res.sendStatus(200);
     } catch (error) {
-        console.log(error.message);
         return res.status(500).send(error.message);
     }
 }
