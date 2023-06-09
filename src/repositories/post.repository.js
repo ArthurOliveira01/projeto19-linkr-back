@@ -53,5 +53,6 @@ export function getFollowing(idUser){
 }
 
 export function getPostsByFollowing(Ids) {
-    return db.query(`SELECT * FROM posts WHERE "idUser" IN (${Ids.map(id => "'" + id + "'").join(",")})`);
+    return db.query(
+      `SELECT * FROM posts WHERE "idUser" IN (${Ids.map(id => "'" + id + "'").join(",")}) ORDER BY createdAt DESC LIMIT 20`);
   }
