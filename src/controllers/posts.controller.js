@@ -3,7 +3,6 @@ import { searchUser } from "../repositories/authorization.repository.js";
 import urlMetadata from "url-metadata";
 
 
-
 export async function postContent(req, res){
     const authorization = req.headers.authorization;
     const token = authorization.replace("Bearer ", "");
@@ -26,7 +25,7 @@ export async function postContent(req, res){
             return res.sendStatus(200);
         }
     } catch (error) {
-        console.log(error.message);
+        console.log(error.message)
         return res.status(500).send(error.message);
     }
 }
@@ -113,6 +112,7 @@ export async function getPosts(req, res){
             }
             const comments = await getComments(info[i].id);
             const quantity = comments.rowCount;
+            console.log(meta);
             const aux = {
                 id: info[i].id,
                 idUser: info[i].idUser,
