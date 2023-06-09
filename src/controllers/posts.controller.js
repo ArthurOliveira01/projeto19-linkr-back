@@ -103,6 +103,8 @@ export async function getPosts(req, res){
             } else {
                 liked = true;
             }
+            const comments = await getComments(info[i].id);
+            const quantity = comments.rowCount;
             const aux = {
                 id: info[i].id,
                 idUser: info[i].idUser,
@@ -113,6 +115,7 @@ export async function getPosts(req, res){
                 foto: userinfo.foto,
                 likes: likeCount,
                 liked: liked,
+                comment: quantity,
                 metaTitle: meta.title,
                 metaDescription: meta.description,
                 metaImg: meta.image
@@ -179,7 +182,6 @@ export async function getComment(req, res){
     const { idPost } = req.params;
     const authorization = req.headers.authorization;
     const token = authorization.replace("Bearer ", "");
-    console.log('teste')
     try {
         const session = await searchSession(token);
         const userId = session.rows[0].idUser;
